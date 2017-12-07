@@ -73,34 +73,30 @@ var p5_sketch = function(p) {
     g.setDefaultEdgeLabel(function() { return {}; });
 
     // Build the nodes and edges (and cache the children)
-    let childLookup = {}
-    let parentLookup = {}
     nodes.forEach((link, linkIndex) => {
-        g.setNode(link.id,    { label: link.label,  width: boxWidth, height: boxHeight });
-        childLookup[link.id] = link.children
-        parentLookup[link.id] = link.parents
+        const nodeData = { 
+          label: link.label,  
+          width: boxWidth, 
+          height: boxHeight, 
+          children: link.children,
+          parents: link.parents,
+          id: link.id
+        }
+
+        g.setNode(link.id,nodeData)    
         link.children.forEach(child => g.setEdge(link.id, child));
     })
 
     // Run the layout code
     dagre.layout(g, config);
     
-    // augment the graph with additional bits of data.
-    let data = g.nodes().map( node => {
-      let obj = g.node(node)
-      obj.id = node
-      obj.children = childLookup[node]
-      obj.parents = parentLookup[node]
-      return obj
-    })
-
-    return data;
+    // Return the nodes
+    return g.nodes().map( node => g.node(node));
   }
 
   // Actually do the drawing bits
   //---------------------------------------------------
   const renderVisualization = function(p,data) {
-
 
     // Draw the lines first, so they're under the boxes.
     let seenLines = {};
@@ -119,11 +115,14 @@ var p5_sketch = function(p) {
 
         // if the vertical section of the line crosses a box, move it to the top.
         for(var box of data) {
+
+          // if the box is not the obj or the child,
           if (box != obj && box != child) {
             // if the box overlaps horizontally,
             if (box.x < x2 && box.x + boxWidth > x2) {
-              // and overlaps horizontally
+              // and if overlaps horizontally,
               if (box.y < y1 && box.y > y3) {
+                // we have a winner!  Flip it.
                 y2 = y3 + marginY;
                 break;
               }
@@ -151,7 +150,6 @@ var p5_sketch = function(p) {
           let arr = [x1,x2]
           seenLines[y2].push(arr)
         }
-
 
         // draw the highlights under the lines
         p.noFill();
