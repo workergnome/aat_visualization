@@ -2,14 +2,18 @@ import axios from "axios";
 
 class ChainBuilder {
   constructor(idNumber, callback) {
+
+    // Set up some instance variables
     this.chains = []
     this.links = {}
-    this.slots = []
-    this.isLoaded = false
+    this.callback = callback;
+
+    // Prime the data
     this.root_url = "http://vocab.getty.edu/aat/" + idNumber;
     this.undownloadedIds = [idNumber];
+    
+    // Build the thing
     this.downloadIds();
-    this.callback = callback;
   }
 
   // ---------------------------------------------------
@@ -30,7 +34,6 @@ class ChainBuilder {
           children: data.has_child,
           parents: data.has_parent
         }
-        //console.log(`downloaded ${obj.label}`)
         this.links[obj.id] = obj
         for (var i = 0; i < obj.parents.length; i++) {
           if (!this.links.hasOwnProperty(obj.parents[i])) {
@@ -96,71 +99,8 @@ class ChainBuilder {
       }
       newChains.push(newChain)
     }
-    
     this.chains = newChains.sort(this.chainSort)
-
-    let adjList = {};
-    for (var chain of this.chains ) {
-      for (var link of chain) {
-        adjList[link.label] = link.children.map(e=> this.links[e].label)
-      }
-    }
-    
-    console.log(JSON.stringify(adjList))
-
-
-
     this.callback(this.chains)
-    // this.generateSlots()
-  }
-
-  //# Create an array of slots, one for each of the longest chains
-  //# insert a link into each slot
-  //# starting with the shortest chain remaining, add that to the slots
-  //# if there are more slots than links, start with the top, then add downwards
-  //# if there are more links than slots, 
-  //      add a slot between the bottom one and the final parent? (not implemented yet)
-  generateSlots() {
-    let mainChain = this.chains.shift()
-    for(var link of mainChain) {
-      let arr = [link.id] 
-      this.slots.push(arr)
-    }
-
-    for(var chain of this.chains){
-      for (var link of chain) {
-        let parentSlot = null;
-        let found = false;
-        for (var i = 0; i < this.slots.length; i++) {
-          for(var parent of link.parents) {
-            if (!found && this.slots[i].includes(parent)) {
-              found = true
-              parentSlot = i
-              break;
-            }
-            if(found) {break;}
-          }
-        }
-        let siblingIsChild = false
-        let slotIds = this.slots[parentSlot+1].map(i => i)
-        for(var child of link.children) {
-          if (slotIds.includes(child)) {console.log("found sib:",child); siblingIsChild = true}
-        }
-        if (siblingIsChild) {
-          this.slots.splice(parentSlot,0,[link_id])
-        }
-        else {
-          this.slots[parentSlot+1].unshift(link.id)
-        }
-      }
-    }
-
-    var l = this.links
-    this.slots = this.slots.map(function(slot){
-      return slot.map(id => l[id])
-    }.bind(this))
-
-    this.callback(this.slots)
   }
 
    // ---------------------------------------------------

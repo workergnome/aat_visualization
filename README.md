@@ -2,12 +2,15 @@
 
 > Visualization for the Getty AAT polyhierarchy
 
-## Initial config
+## Initial system configuration
+
+*(You don't need to do this--just here for my documentation of what I did to get this set up.)*
 
 ```bash
 
 # Update your NPM installation to the latest version
 npm i -g npm
+
 # Install the Vue.js Command Line Interface
 npm install -g vue-cli
 
@@ -15,7 +18,7 @@ npm install -g vue-cli
 vue init webpack-simple aat_vis
 ```
 
-## Build Setup
+## Installation Instructions
 
 ``` bash
 # install dependencies
