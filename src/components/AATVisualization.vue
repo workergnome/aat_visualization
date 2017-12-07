@@ -6,7 +6,7 @@
 <!-- ################### JAVACRIPT ################### -->
 <script>
 import p5 from "p5";
-import ChainBuilder from "./ChainBuilder.js";
+import NodeDownloader from "./NodeDownloader.js";
 import P5Visualization from './P5Visualization.js';
 
 export default { 
@@ -25,10 +25,11 @@ export default {
   // Lifecycle hooks
   // ------------------------------------------------------
   created: function() {
-    new ChainBuilder(this.idNumber, chains => this.sketch.chains = chains)
+    new NodeDownloader(this.idNumber, nodes => this.sketch.nodes = nodes)
   },
   mounted: function() {
     this.sketch = new p5(P5Visualization,"p5_viz");
+    this.sketch.rootId = this.idNumber;
   },
   beforeDestroy: function() {
     this.sketch.remove();

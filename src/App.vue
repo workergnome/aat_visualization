@@ -9,11 +9,16 @@
 <script>
 import AATVisualization from './components/AATVisualization.vue'
 
-const PROVENANCE = 300055863
-const COMINGS_OUT = 300248002
-const RHYTA = 300198841
-const MULTICULTURALISM = 300233662
-const GOLD = 300011021
+// Sample Data
+const PROVENANCE        = "http://vocab.getty.edu/aat/300055863"
+const COMINGS_OUT       = "http://vocab.getty.edu/aat/300248002"
+const RHYTA             = "http://vocab.getty.edu/aat/300198841"
+const MULTICULTURALISM  = "http://vocab.getty.edu/aat/300233662"
+const GOLD              = "http://vocab.getty.edu/aat/300011021"
+const ETHICS            = "http://vocab.getty.edu/aat/300054290"
+const PUBLISHING_HOUSES = "http://vocab.getty.edu/aat/300386627"
+const ROBES             = "http://vocab.getty.edu/aat/300209852"
+const FOMECOR           = "http://vocab.getty.edu/aat/300196645"
 
 export default {
   name: 'app',
