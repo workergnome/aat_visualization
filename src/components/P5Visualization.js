@@ -31,7 +31,7 @@ var p5_sketch = function(p) {
 
   const CHILD_COLOR      = 240
   const CHILD_LINE_COLOR = 180
-
+  let data = null;
 
   // Initialize the canvas area
   //---------------------------------------------------
@@ -48,8 +48,10 @@ var p5_sketch = function(p) {
       drawLoadingMessage(p,"loading visualization");
     }
     else {
-      p.noLoop();
-      const data = computeVisualization(p,p.nodes);
+      // p.noLoop();
+      if (!data) {
+        data = computeVisualization(p,p.nodes);
+      }
       renderVisualization(p,data);
     }
   }
