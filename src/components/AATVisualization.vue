@@ -24,12 +24,10 @@ export default {
 
   // Lifecycle hooks
   // ------------------------------------------------------
-  created: function() {
-    new NodeDownloader(this.idNumber, nodes => this.sketch.nodes = nodes)
-  },
   mounted: function() {
     this.sketch = new p5(P5Visualization,"p5_viz");
     this.sketch.rootId = this.idNumber;
+    new NodeDownloader(this.idNumber, nodes => this.sketch.nodes = nodes)
   },
   beforeDestroy: function() {
     this.sketch.remove();

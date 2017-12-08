@@ -15,15 +15,22 @@ var p5_sketch = function(p) {
   let   vizWidth     = canvasWidth - marginX * 2
   let   vizHeight    = canvasWidth - marginY * 2
 
-  const HIGHLIGHT_WIDTH  = 5
-  const LINE_WIDTH       = 1
   const BACKGROUND_COLOR = 220
-  const LINE_COLOR       = 0
+
+  const HIGHLIGHT_WIDTH  = 5
+  const LINE_WIDTH       = 2
+  const LINE_COLOR       = 75
+
   const TEXT_COLOR       = 0
-  const CHILD_COLOR      = 230
-  const CHILD_LINE_COLOR = 120
-  const BOX_COLOR        = 255
   const TEXT_MARGIN      = 6
+
+  const BOX_COLOR        = 255
+  const BOX_LINE_COLOR   = 100
+  const ROOT_BOX_LINE_COLOR = 0
+  const BOX_LINE_WIDTH   = 1
+
+  const CHILD_COLOR      = 240
+  const CHILD_LINE_COLOR = 180
 
 
   // Initialize the canvas area
@@ -101,12 +108,18 @@ var p5_sketch = function(p) {
     // Draw the lines first, so they're under the boxes.
     let seenLines = {};
     for(var obj of data) {
-      obj.children.forEach(childId => {
+      let sortedChildren = obj.children.sort((a,b) => {
+        const child1 = data.find(child => child.id == a)
+        const child2 = data.find(child => child.id == b)
+        let val = p.abs(obj.x - child1.x) >= p.abs(obj.x -child2.x) ? 1 : -1;
+        return val
+      })
+      sortedChildren.forEach(childId => {
         let child = data.find(p => p.id == childId)
 
         // Calculate the x positions of the line.
-        let x1 = p.map(obj.x,0,vizWidth,child.x+boxWidth*.2,child.x+boxWidth*.4)
-        let x2 = p.map(child.x,0,vizWidth,obj.x+boxWidth*.2,obj.x+boxWidth*.4)
+        let x1 = p.map(obj.x,0,vizWidth,child.x+boxWidth*.15,child.x+boxWidth*.45)
+        let x2 = p.map(child.x,0,vizWidth,obj.x+boxWidth*.15,obj.x+boxWidth*.45)
 
         // set the start and end point of the line
         let y1 = child.y;
@@ -167,36 +180,46 @@ var p5_sketch = function(p) {
         p.stroke(LINE_COLOR)
         p.strokeWeight(LINE_WIDTH)
         p.beginShape();
-        p.vertex(x1,y1);
+        p.vertex(x1,y1-4);
         p.vertex(x1,y2);
         p.vertex(x2,y2);
         p.vertex(x2,y3);
         p.endShape();
 
         // draw the lovely little arrow ends
-        p.triangle(x1,y1,x1-1,y1-3,x1+1,y1-3)
+        p.triangle(x1,y1-1,x1-1,y1-4,x1+1,y1-4)
       })
     }
 
     // Draw the rectangles.
     // TODO:  internationalize these labels.
     for(var obj of data) {
-      
       if (obj.parents && obj.parents.includes(p.rootId)) {
         p.fill(CHILD_COLOR)
         p.stroke(CHILD_LINE_COLOR)
       }
       else {
         p.fill(BOX_COLOR);
-        p.stroke(LINE_COLOR)
+        p.stroke(BOX_LINE_COLOR)
       }
 
-      p.rect(obj.x,obj.y,boxWidth, boxHeight)
 
+      // Draw the second border if it's the rootID
       if (obj.id == p.rootId) {
-        p.rect(obj.x+2,obj.y+2,boxWidth-4, boxHeight-4)
+        p.stroke(ROOT_BOX_LINE_COLOR);
+        p.strokeWeight(BOX_LINE_WIDTH + 0.5)
+        p.rect(obj.x,obj.y,boxWidth, boxHeight)
+        p.stroke(BOX_LINE_COLOR);
+        p.strokeWeight(BOX_LINE_WIDTH )
+        p.rect(obj.x+3,obj.y+2.5,boxWidth-6, boxHeight-6)
+      }
+      else {
+        p.strokeWeight(BOX_LINE_WIDTH)
+        p.rect(obj.x,obj.y,boxWidth, boxHeight)
+
       }
 
+      // Draw the text.
       p.fill(TEXT_COLOR)
       p.noStroke();
       p.text(obj.label,obj.x+TEXT_MARGIN,obj.y+TEXT_MARGIN,boxWidth-TEXT_MARGIN*2, boxHeight-TEXT_MARGIN*2)
