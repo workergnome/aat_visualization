@@ -4,16 +4,12 @@ var p5_sketch = function(p) {
 
   // Rendering Constants
   //---------------------------------------------------
-  let   canvasWidth  = 800;
-  let   canvasHeight = 1200;
-  const rowHeight    = 100;
-  const colWidth     = 150;
-  const marginX      = 10;
-  const marginY      = 14;
-  const boxHeight    = rowHeight-marginY*2;
-  const boxWidth     = colWidth-marginX*2;
-  let   vizWidth     = canvasWidth - marginX * 2
-  let   vizHeight    = canvasWidth - marginY * 2
+  const ROW_HEIGHT    = 100;
+  const COL_WIDTH     = 150;
+  const MARGIN_X      = 10;
+  const MARGIN_Y      = 14;
+  const BOX_HEIGHT    = ROW_HEIGHT-MARGIN_Y*2;
+  const BOX_WIDTH     = COL_WIDTH-MARGIN_X*2;
 
   const BACKGROUND_COLOR = 220
 
@@ -31,6 +27,13 @@ var p5_sketch = function(p) {
 
   const CHILD_COLOR      = 240
   const CHILD_LINE_COLOR = 180
+
+  // Global variables.  (Canvas width should be computed.)
+  //---------------------------------------------------
+  let canvasWidth  = 800;
+  let canvasHeight = 1200;
+  let vizWidth     = canvasWidth - MARGIN_X * 2
+  let vizHeight    = canvasWidth - MARGIN_Y * 2
   let data = null;
 
   // Initialize the canvas area
@@ -70,12 +73,12 @@ var p5_sketch = function(p) {
   const computeVisualization = function(p,nodes) {
 
     // Initialize the graph library
-    let g = new dagre.graphlib.Graph();
+    const g = new dagre.graphlib.Graph();
 
     // Set some defaults
     const config = {
-      ranksep: marginY*2,
-      nodesep: marginX*2,
+      ranksep: MARGIN_Y*2,
+      nodesep: MARGIN_X*2,
       ranker: "network-simplex",
     }
     g.setGraph(config);
@@ -85,8 +88,8 @@ var p5_sketch = function(p) {
     nodes.forEach((link, linkIndex) => {
         const nodeData = { 
           label: link.label,  
-          width: boxWidth, 
-          height: boxHeight, 
+          width: BOX_WIDTH, 
+          height: BOX_HEIGHT, 
           children: link.children,
           parents: link.parents,
           id: link.id
@@ -122,13 +125,13 @@ var p5_sketch = function(p) {
         // Calculate the x positions of the line.
         const LEFTMOST = .35
         const RIGHTMOST = .65
-        let x1 = p.map(obj.x,0,vizWidth,child.x+boxWidth*LEFTMOST,child.x+boxWidth*RIGHTMOST)
-        let x2 = p.map(child.x,0,vizWidth,obj.x+boxWidth*LEFTMOST,obj.x+boxWidth*RIGHTMOST)
+        let x1 = p.map(obj.x,0,vizWidth,child.x+BOX_WIDTH*LEFTMOST,child.x+BOX_WIDTH*RIGHTMOST)
+        let x2 = p.map(child.x,0,vizWidth,obj.x+BOX_WIDTH*LEFTMOST,obj.x+BOX_WIDTH*RIGHTMOST)
 
         // set the start and end point of the line
         let y1 = child.y;
-        let y3 = obj.y + boxHeight;
-        let y2 = (y1 - marginY);
+        let y3 = obj.y + BOX_HEIGHT;
+        let y2 = (y1 - MARGIN_Y);
 
         // if the vertical section of the line crosses a box, move it to the top.
         for(var box of data) {
@@ -136,11 +139,11 @@ var p5_sketch = function(p) {
           // if the box is not the obj or the child,
           if (box != obj && box != child) {
             // if the box overlaps horizontally,
-            if (box.x < x2 && box.x + boxWidth > x2) {
+            if (box.x < x2 && box.x + BOX_WIDTH > x2) {
               // and if overlaps horizontally,
               if (box.y < y1 && box.y > y3) {
                 // we have a winner!  Flip it.
-                y2 = y3 + marginY;
+                y2 = y3 + MARGIN_Y;
                 break;
               }
             }
@@ -212,21 +215,21 @@ var p5_sketch = function(p) {
       if (obj.id == p.rootId) {
         p.stroke(ROOT_BOX_LINE_COLOR);
         p.strokeWeight(BOX_LINE_WIDTH + 0.5)
-        p.rect(obj.x,obj.y,boxWidth, boxHeight)
+        p.rect(obj.x,obj.y,BOX_WIDTH, BOX_HEIGHT)
         p.stroke(BOX_LINE_COLOR);
         p.strokeWeight(BOX_LINE_WIDTH )
-        p.rect(obj.x+3,obj.y+2.5,boxWidth-6, boxHeight-6)
+        p.rect(obj.x+3,obj.y+2.5,BOX_WIDTH-6, BOX_HEIGHT-6)
       }
       else {
         p.strokeWeight(BOX_LINE_WIDTH)
-        p.rect(obj.x,obj.y,boxWidth, boxHeight)
+        p.rect(obj.x,obj.y,BOX_WIDTH, BOX_HEIGHT)
 
       }
 
       // Draw the text.
       p.fill(TEXT_COLOR)
       p.noStroke();
-      p.text(obj.label,obj.x+TEXT_MARGIN,obj.y+TEXT_MARGIN,boxWidth-TEXT_MARGIN*2, boxHeight-TEXT_MARGIN*2)
+      p.text(obj.label,obj.x+TEXT_MARGIN,obj.y+TEXT_MARGIN,BOX_WIDTH-TEXT_MARGIN*2, BOX_HEIGHT-TEXT_MARGIN*2)
     }
   }
 
