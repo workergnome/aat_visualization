@@ -1,4 +1,5 @@
 import axios from "axios";
+import AATApi from "./AATApi.js"
 
 class NodeDownloader {
   constructor(rootUrl, language, callback) {
@@ -40,7 +41,7 @@ class NodeDownloader {
 
           const obj = {
             id: data.id,
-            label: this.getTerm(data, {language: [this.language], allowFallback: true}),
+            label: AATApi.getTerm(data, {language: [this.language], allowFallback: true}),
             children: data.has_child,
             parents: data.has_parent
           }
@@ -91,30 +92,6 @@ class NodeDownloader {
       return node;
     })
     this.callback(pruned_nodes);
-   }
-
-   getTerm(entity, opts = {}) {
-     if(!entity && entity.identified_by) {return null};
-     let terms = entity.identified_by
-     if (opts.language) {
-       let newTerms = []
-       for (const lang of opts.language) {
-
-         newTerms = terms.filter(term => term.language == lang)
-
-         if (newTerms.length) {
-           break;
-         }
-       }
-       terms = newTerms
-     }
-     if (terms.length) {
-       return terms[0].value
-     }
-     else if (opts.allowFallback) {
-       return entity.label
-     }
-     return null;
    }
 }
 
