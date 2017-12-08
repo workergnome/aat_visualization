@@ -1,7 +1,7 @@
 <!-- ###################   HTML   ################### -->
 <template>
   <div id="app">
-    <AATVisualization :id-number="id"/>
+    <AATVisualization :root-id="id"/>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
   name: 'app',
   data () {
     return {
-      id: RHYTA
+      id: PUBLISHING_HOUSES
     }
   },
   components: {

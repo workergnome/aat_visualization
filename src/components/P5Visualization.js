@@ -123,8 +123,8 @@ var p5_sketch = function(p) {
         let child = data.find(p => p.id == childId)
 
         // Calculate the x positions of the line.
-        const LEFTMOST = .35
-        const RIGHTMOST = .65
+        const LEFTMOST = .15
+        const RIGHTMOST = .45
         let x1 = p.map(obj.x,0,vizWidth,child.x+BOX_WIDTH*LEFTMOST,child.x+BOX_WIDTH*RIGHTMOST)
         let x2 = p.map(child.x,0,vizWidth,obj.x+BOX_WIDTH*LEFTMOST,obj.x+BOX_WIDTH*RIGHTMOST)
 
