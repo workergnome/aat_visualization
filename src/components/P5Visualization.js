@@ -227,9 +227,11 @@ var p5_sketch = function(p) {
       }
 
       // Draw the text.
-      p.fill(TEXT_COLOR)
-      p.noStroke();
-      p.text(obj.label,obj.x+TEXT_MARGIN,obj.y+TEXT_MARGIN,BOX_WIDTH-TEXT_MARGIN*2, BOX_HEIGHT-TEXT_MARGIN*2)
+      if (obj.label) {
+        p.fill(TEXT_COLOR)
+        p.noStroke();
+        p.text(obj.label,obj.x+TEXT_MARGIN,obj.y+TEXT_MARGIN,BOX_WIDTH-TEXT_MARGIN*2, BOX_HEIGHT-TEXT_MARGIN*2)
+      }
     }
   }
 

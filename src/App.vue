@@ -1,7 +1,7 @@
 <!-- ###################   HTML   ################### -->
 <template>
   <div id="app">
-    <AATVisualization :root-id="id"/>
+    <AATVisualization :root-id="id" :language="language" />
   </div>
 </template>
 
@@ -24,7 +24,8 @@ export default {
   name: 'app',
   data () {
     return {
-      id: PUBLISHING_HOUSES
+      id: GOLD,
+      language: "fr"
     }
   },
   components: {

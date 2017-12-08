@@ -12,7 +12,7 @@ import P5Visualization from './P5Visualization.js';
 export default { 
   // Externally-passed properties
   // ------------------------------------------------------
-  props: ["rootId"],
+  props: ["rootId", "language"],
 
   // Internal state
   // ------------------------------------------------------
@@ -27,7 +27,7 @@ export default {
   mounted: function() {
     this.sketch = new p5(P5Visualization,"p5_viz");
     this.sketch.rootId = this.rootId;
-    new NodeDownloader(this.rootId, nodes => this.sketch.nodes = nodes)
+    new NodeDownloader(this.rootId, this.language, nodes => this.sketch.nodes = nodes)
   },
   beforeDestroy: function() {
     this.sketch.remove();

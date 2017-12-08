@@ -1,10 +1,11 @@
 import axios from "axios";
 
 class NodeDownloader {
-  constructor(rootUrl, callback) {
+  constructor(rootUrl, language, callback) {
 
     // Set up some instance variables
     this.nodes = {}
+    this.language = language;
     this.callback = callback;
     this.rootUrl = rootUrl;
 
@@ -36,9 +37,10 @@ class NodeDownloader {
           
           // Process the response and add it as a new node
           const data = response.data;
+
           const obj = {
             id: data.id,
-            label: data.label,
+            label: this.getTerm(data, {language: [this.language], allowFallback: true}),
             children: data.has_child,
             parents: data.has_parent
           }
@@ -85,10 +87,34 @@ class NodeDownloader {
       node.children = node.children.filter(function(p) {
         return Object.keys(this.nodes).indexOf(p) >= 0
       }.bind(this));
-      
+
       return node;
     })
     this.callback(pruned_nodes);
+   }
+
+   getTerm(entity, opts = {}) {
+     if(!entity && entity.identified_by) {return null};
+     let terms = entity.identified_by
+     if (opts.language) {
+       let newTerms = []
+       for (const lang of opts.language) {
+
+         newTerms = terms.filter(term => term.language == lang)
+
+         if (newTerms.length) {
+           break;
+         }
+       }
+       terms = newTerms
+     }
+     if (terms.length) {
+       return terms[0].value
+     }
+     else if (opts.allowFallback) {
+       return entity.label
+     }
+     return null;
    }
 }
 
