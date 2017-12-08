@@ -104,18 +104,18 @@ var p5_sketch = function(p) {
     g.setDefaultEdgeLabel(function() { return {}; });
 
     // Build the nodes and edges (and cache the children)
-    nodes.forEach((link, linkIndex) => {
+    nodes.forEach((node, nodeIndex) => {
         const nodeData = { 
-          label: link.label,  
+          label: node.label,  
           width: BOX_WIDTH, 
           height: BOX_HEIGHT, 
-          children: link.children,
-          parents: link.parents,
-          id: link.id
+          children: node.children,
+          parents: node.parents,
+          id: node.id
         }
 
-        g.setNode(link.id,nodeData)    
-        link.children.forEach(child => g.setEdge(link.id, child));
+        g.setNode(node.id,nodeData)    
+        node.children.forEach(child => g.setEdge(node.id, child));
     })
 
     // Run the layout code
