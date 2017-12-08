@@ -120,8 +120,10 @@ var p5_sketch = function(p) {
         let child = data.find(p => p.id == childId)
 
         // Calculate the x positions of the line.
-        let x1 = p.map(obj.x,0,vizWidth,child.x+boxWidth*.15,child.x+boxWidth*.45)
-        let x2 = p.map(child.x,0,vizWidth,obj.x+boxWidth*.15,obj.x+boxWidth*.45)
+        const LEFTMOST = .35
+        const RIGHTMOST = .65
+        let x1 = p.map(obj.x,0,vizWidth,child.x+boxWidth*LEFTMOST,child.x+boxWidth*RIGHTMOST)
+        let x2 = p.map(child.x,0,vizWidth,obj.x+boxWidth*LEFTMOST,obj.x+boxWidth*RIGHTMOST)
 
         // set the start and end point of the line
         let y1 = child.y;
