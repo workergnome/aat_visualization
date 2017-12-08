@@ -39,8 +39,8 @@ export default {
 <!-- ###################    CSS    ################### -->
 <style lang="sass">
   #p5_viz
-    width: 100%
-    height: 100%
+    width: 99.5%
+    height: 99.5%
     margin: 0
     padding: 0
 </style>
