@@ -27,6 +27,7 @@ export default {
   mounted: function() {
     this.sketch = new p5(P5Visualization,"p5_viz");
     this.sketch.rootId = this.rootId;
+    this.sketch.parent = document.getElementById("p5_viz");
     new NodeDownloader(this.rootId, this.language, nodes => this.sketch.nodes = nodes)
   },
   beforeDestroy: function() {
@@ -37,5 +38,9 @@ export default {
 
 <!-- ###################    CSS    ################### -->
 <style lang="sass">
-  
+  #p5_viz
+    width: 100%
+    height: 100%
+    margin: 0
+    padding: 0
 </style>

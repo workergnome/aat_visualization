@@ -13,27 +13,37 @@ var p5_sketch = function(p) {
 
   const BACKGROUND_COLOR = 220
 
-  const HIGHLIGHT_WIDTH  = 5
-  const LINE_WIDTH       = 2
-  const LINE_COLOR       = 75
+  const HIGHLIGHT_WIDTH     = 5
+  const LINE_WIDTH          = 2
+  const LINE_COLOR          = 75
+   
+  const TEXT_COLOR          = 0
+  const TEXT_MARGIN         = 6
 
-  const TEXT_COLOR       = 0
-  const TEXT_MARGIN      = 6
-
-  const BOX_COLOR        = 255
-  const BOX_LINE_COLOR   = 100
+  const BOX_COLOR           = 250
+  const BOX_LINE_COLOR      = 100
   const ROOT_BOX_LINE_COLOR = 0
-  const BOX_LINE_WIDTH   = 1
+  const ROOT_BOX_COLOR      = [240,240,255]
+  const BOX_LINE_WIDTH      = 1
 
-  const CHILD_COLOR      = 240
-  const CHILD_LINE_COLOR = 180
+  const CHILD_COLOR         = 240
+  const CHILD_LINE_COLOR    = 180
 
   // Global variables.  (Canvas width should be computed.)
   //---------------------------------------------------
-  let canvasWidth  = 800;
-  let canvasHeight = 1200;
+  let canvasWidth  = 10;
+  let canvasHeight = 10;
   let vizWidth     = canvasWidth - MARGIN_X * 2
-  let vizHeight    = canvasWidth - MARGIN_Y * 2
+  let vizHeight    = canvasHeight - MARGIN_Y * 2
+  let horizontalSize = 0;
+  let verticalSize = 0;
+  let startX = 0;
+  let startY = 0;
+
+  let scaleFactor = 1;
+  let xOffset = 0;
+  let yOffset = 0;
+
   let data = null;
 
   // Initialize the canvas area
@@ -41,6 +51,7 @@ var p5_sketch = function(p) {
   p.setup = function(){
     p.createCanvas(canvasWidth, canvasHeight);
     p.textAlign(p.CENTER, p.CENTER)
+    recalculateSize(p)
   }
 
   // Core Draw Loop
@@ -54,9 +65,17 @@ var p5_sketch = function(p) {
       // p.noLoop();
       if (!data) {
         data = computeVisualization(p,p.nodes);
+        recalculateSize(p);
       }
+
+      p.scale(scaleFactor)
+      p.translate(xOffset,yOffset);
       renderVisualization(p,data);
     }
+  }
+
+  p.windowResized = function() {
+    recalculateSize(p);
   }
 
   // Draw the rendering message. 
@@ -101,9 +120,45 @@ var p5_sketch = function(p) {
 
     // Run the layout code
     dagre.layout(g, config);
+             console.log(g)
+
+    const returnedNodes = g.nodes().map( node => g.node(node));
     
+    // Calculate visualization size
+    let maxX = 0;
+    let minX = canvasWidth;
+    let maxY = 0;
+    let minY = canvasHeight;
+    for (const n of returnedNodes) {
+      maxX = p.max(maxX,n.x)
+      minX = p.min(minX,n.x)
+      maxY = p.max(maxY,n.y)
+      minY = p.min(minY,n.y)
+    }
+    startX = minX;
+    startY = minY;
+    horizontalSize = (maxX+BOX_WIDTH - minX)
+    verticalSize = (maxY+BOX_HEIGHT - minY)
+
     // Return the nodes
-    return g.nodes().map( node => g.node(node));
+    return returnedNodes;
+  }
+
+  const recalculateSize = function(p) {
+    // console.log(document.getElementById("p5_viz"))
+    canvasWidth  = p.parent.offsetWidth;
+    canvasHeight = p.parent.offsetHeight;
+    p.resizeCanvas(canvasWidth, canvasHeight);
+    vizWidth     = canvasWidth - MARGIN_X * 2
+    vizHeight    = canvasHeight - MARGIN_Y * 2
+    
+    if (data) {
+      const xScale = p.min(1,vizWidth/horizontalSize);
+      const yScale = p.min(1,vizHeight/verticalSize);
+      scaleFactor = p.min(xScale,yScale)
+      xOffset = -startX+canvasWidth/scaleFactor/2-horizontalSize/2;
+      yOffset = -startY+canvasHeight/scaleFactor/2-verticalSize/2;
+    }
   }
 
   // Actually do the drawing bits
@@ -213,6 +268,7 @@ var p5_sketch = function(p) {
 
       // Draw the second border if it's the rootID
       if (obj.id == p.rootId) {
+        p.fill(ROOT_BOX_COLOR);
         p.stroke(ROOT_BOX_LINE_COLOR);
         p.strokeWeight(BOX_LINE_WIDTH + 0.5)
         p.rect(obj.x,obj.y,BOX_WIDTH, BOX_HEIGHT)
